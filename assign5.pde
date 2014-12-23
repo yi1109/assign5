@@ -9,9 +9,10 @@ final int GAME_PLAYING = 2;
 final int GAME_PAUSE   = 3;
 final int GAME_WIN     = 4;
 final int GAME_LOSE    = 5;
+final int GAME_OVER    = 6;
 
 int status;              //Game Status
-int life ;
+int life = 3 ;
 int myBallX ;
 int myBallY;
 int brickNum;
@@ -23,7 +24,7 @@ String sPause = "Press Enter to Resume";
 String pWin   = "WINNER";
 String sWin   = "SCORE";
 String pLose  = "BOOM";
-String sLose  = "You are dead!";
+String sLose  = "GAME OVER";
 void printText(
 int pSize, int px, int py, String pMark, String sMark) {  
   textSize(pSize);
@@ -40,7 +41,6 @@ void setup(){
   size(640,480);
   background(255);
   
-  life = 3;
   
   theBar = new Bar(80);
   bricks = new Brick[50];
@@ -51,11 +51,17 @@ void setup(){
 }
 void reset(){
   brickNum=0;
+  life=3;
+  for(int i=0;i<bricks.length;i++){
+     fill(int (i*49%255),int(i*49%255),255);
+     bricks[i].display();
+      }
   
 }
 void draw(){
   background(0);
   noStroke();
+  println(life);
   switch(status){
     
     case GAME_START:;
@@ -118,11 +124,16 @@ void draw(){
     /*---------Print Text-------------*/
     //loseAnimate();
    fill(95, 194, 226);
-    printText(40, width/2, height/2, pLose, sLose);
+    printText(40, width/2, height/2, "LOST A LIFE","PRESS ENTER TO CONTINUE");
   
     /*--------------------------------*/
     break;
+    
+  case GAME_OVER:
   
+   fill(95, 194, 226);
+    printText(40, width/2, height/2, "BOOM","GAME OVER");
+    break;
      }
 }
  
@@ -177,13 +188,15 @@ void checkWin(){
        status=GAME_WIN;
     }
     if(myBall.y>=height){
-       life--;
+       life-=1;
+       status=GAME_LOSE;
+    }
        if(life==0){
-         status=GAME_LOSE;
+         status=GAME_OVER;
        }
     }
     
-}
+
 
 
 
@@ -194,13 +207,13 @@ void mousePressed(){
     }
 }
 void keyPressed() {
-  /*if (keyCode==ENTER) {
-    status = GAME_RUN;
-  }*/
+  if (keyCode==ENTER) {
+  /*status = GAME_START;
+  }
   statusCtrl();
 }
 void statusCtrl() {
-  if (key == ENTER) {
+  if (key == ENTER) {*/
     switch(status) {
     case GAME_START:
       status = GAME_RUN;
@@ -213,13 +226,16 @@ void statusCtrl() {
       status = GAME_PLAYING;
       break;
     case GAME_WIN:
-      status = GAME_RUN;
-      //reset();
+      status = GAME_START;
+      reset();
       break;
     case GAME_LOSE:
       status = GAME_RUN;
-      //reset();
       break;
+    case GAME_OVER:
+      status = GAME_START;
+      reset();
+      break;  
     }
   }
 }
