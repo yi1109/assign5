@@ -61,7 +61,7 @@ void reset(){
 void draw(){
   background(0);
   noStroke();
-  println(life);
+  //println(life);
   switch(status){
     
     case GAME_START:;
